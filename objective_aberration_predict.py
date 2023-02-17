@@ -34,7 +34,6 @@ for ii in range(0,10):
     max_output = 1
     min_output = 0
     im = (np.array(img)-min_input)*(((max_output-min_output)/(max_input-min_input))+min_output)
-    # Io=(Ii-Mini)*(((Maxo-Mino)/(Maxi-Mini))+Mino)
     
     fig,ax = plt.subplots(1)
     ax.imshow(im)
@@ -48,8 +47,6 @@ for ii in range(0,10):
         y, x, r = blob_log[ii]
         if 0.5<=r<=2:
             rect = patches.Rectangle((x-16, y-16), 32, 32, edgecolor='r', fill=None)
-        #y, x, r = blob_log[ii]
-        #c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
             ax.add_patch(rect)
     plt.show()
     
@@ -65,7 +62,7 @@ for ii in range(0,10):
         if 40<=order<=(totalbeads-40):
             return range(-40, 40)
     
-    #filter images with multiple beads. 
+    # filter images with multiple beads
     for ii in range(blob_log.shape[0]):
         overlap_flag = 0
         for xx in giverange(ii, blob_log.shape[0]): 
@@ -84,24 +81,17 @@ for ii in range(0,10):
         ax.add_patch(rect)
     plt.show()
     
-    #%%save all cropped images
+    # save all cropped images
     
     crop_bead = []
     
     for ii in range(len(X)):
         crop_bead.append(stackarray[:,Y[ii]-16:Y[ii]+16,X[ii]-16:X[ii]+16])
-        # 20-14=6: : 20+14=34
     
-    #%% find focal plane
-    '''    
-    test_bead=crop_bead[18]
-    blob = []
-    for ii in range(test_bead.shape[0]):
-        blob.append(skim.feature.blob_log(test_bead[ii,:,:]/max_input, min_sigma=minsigma, max_sigma=maxsigma, threshold=thres))
-    '''
+    # find focal plane
     focal_plane = 13 # 
     
-    #%% cropping and normalization
+    # cropping and normalization
 
     cropbead_new=[]
     cropbead_nor=[]
@@ -111,7 +101,6 @@ for ii in range(0,10):
     weak = []
     for ii in range(len(X)):
         singlebead = stackarray[focal_plane-6:focal_plane+5,Y[ii]-16:Y[ii]+16,X[ii]-16:X[ii]+16]
-        #singlebead = stackarray[0:11,Y[ii]-16:Y[ii]+16,X[ii]-16:X[ii]+16]
 
         #find max and min value and do normalization
         slidemax = np.amax(singlebead)
@@ -119,12 +108,10 @@ for ii in range(0,10):
         beadmax = max(beadmax, slidemax)
         beadmin = min(beadmin, slidemin)
         cropbead_new.append(singlebead) #16bits beads images
-        #nor = (np.array(singlebead)-slidemin)*(((max_output-min_output)/(slidemax-slidemin))+min_output)
-        #cropbead_nor.append(nor) #nomalized beads images
         cropbead_nor.append(np.array(singlebead)/65535) #nomalized beads images
         
     
-    #%%make predictions
+    # make predictions
     array = np.asarray(cropbead_nor)
     arraynew = np.transpose(cropbead_nor, (0,2,3,1))
     
@@ -134,7 +121,7 @@ for ii in range(0,10):
     name = ["tilt_x_phase", "tilt_y_phase","defocus_phase","ast_ax_phase", "ast_xy_phase", "coma_x_phase", "coma_y_phase", "sphe_phase", "tilt_x_mag", "tilt_y_mag", "defocus_mag", "ast_ax_mag", "ast_xy_mag", "coma_x_mag", "coma_y_mag", "sphe_mag"]
     
 
-    #%% save positions and predictions into excel files
+    # save positions and predictions into excel files
     import xlsxwriter as xlwr
     
     workbook = xlwr.Workbook("C:/Users/ziqian/Desktop/asti/" +test+ ".xlsx")
